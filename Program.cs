@@ -61,10 +61,10 @@ namespace pizza_slicer
         private static void SliceThisPizza()
         {
             //todo Uncomment _one_ of the following four lines to analyze the required Pizza - 2018
-            //_inputPath = ".\\input\\big.in";
-            _inputPath = ".\\input\\medium.in";
-            //_inputPath = ".\\input\\small.in";
-            //_inputPath = ".\\input\\example.in";
+            //_inputPath = ".\\input\\d_big.in";
+            _inputPath = ".\\input\\c_medium.in";
+            //_inputPath = ".\\input\\b_small.in";
+            //_inputPath = ".\\input\\a_example.in";
             _pizza = new Pizza(_inputPath);
             _inputFileName = Path.GetFileName(_inputPath);
 
@@ -119,7 +119,7 @@ namespace pizza_slicer
             var pizzaColumnsPizzaCount = _pizza.ColumnsPizzaCount;
 
             GenerateOutputFile(_theUltimateSlice.SuccessfulSlices, operationName);
-            DrawPizzaTo2X2(slicePizzaContent, pizzaRowsPizzaCount, pizzaColumnsPizzaCount, operationName);
+            DrawPizza(slicePizzaContent, pizzaRowsPizzaCount, pizzaColumnsPizzaCount, operationName);
             WritePizzaContent(slicePizzaContent, pizzaRowsPizzaCount, pizzaColumnsPizzaCount, operationName);
         }
 
@@ -331,7 +331,7 @@ namespace pizza_slicer
             }
         }
 
-        private static void DrawPizzaTo2X2(
+        private static void DrawPizza(
             char[,] pizzaContent,
             int rowsCount,
             int columnsCount,
@@ -360,25 +360,6 @@ namespace pizza_slicer
                     Console.WriteLine(e.StackTrace);
                 }
             }
-        }
-
-        private static Color IngredientColor(char pizzaCell)
-        {
-            Color ingredientColor;
-            switch (pizzaCell)
-            {
-                case TOMATO:
-                    ingredientColor = Color.Maroon;
-                    break;
-                case MUSHROOM:
-                    ingredientColor = Color.DarkSeaGreen;
-                    break;
-                default:
-                    ingredientColor = Color.AntiqueWhite;
-                    break;
-            }
-
-            return ingredientColor;
         }
 
         private static Rgba32 IngredientColorRgba(char pizzaCell)
