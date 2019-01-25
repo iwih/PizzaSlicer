@@ -1,5 +1,5 @@
 ﻿// MIT License
-// Goolge Hash Code 2018 - Training Round
+// Google Hash Code 2018 - Training Round
 // Team: root.cake
 // Happy Coding <3
 
@@ -13,12 +13,12 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 
-namespace Graphics
+namespace pizza_slicer
 {
     public class Program
     {
         public const char TOMATO = 'T';
-        public const char MASHROOM = 'M';
+        public const char MUSHROOM = 'M';
         public const char EMPTY = '0';
 
         private static string _directoryForOutput;
@@ -196,7 +196,7 @@ namespace Graphics
                         {
                             var pizzaCloned = pizza.Clone();
 
-                            var nextPossiblityIndex = i + 1;
+                            var nextPossibilityIndex = i + 1;
 
                             var successfulSlicesCloned = successfulSlices.GetRange(0, successfulSlices.Count);
 
@@ -211,7 +211,7 @@ namespace Graphics
                                 possibleSlices,
                                 successfulSlicesCloned,
                                 totalSlicedCellsCloned,
-                                nextPossiblityIndex);
+                                nextPossibilityIndex);
                             //);
                         }
                     }
@@ -381,7 +381,7 @@ namespace Graphics
                 case TOMATO:
                     ingredientColor = Color.Maroon;
                     break;
-                case MASHROOM:
+                case MUSHROOM:
                     ingredientColor = Color.DarkSeaGreen;
                     break;
                 default:
@@ -491,7 +491,7 @@ namespace Graphics
 
                         if (ingredient == TOMATO)
                             TomatoCount++;
-                        else if (ingredient == MASHROOM)
+                        else if (ingredient == MUSHROOM)
                             MashroomCount++;
                         else
                         {
@@ -587,7 +587,7 @@ namespace Graphics
                     {
                         var cellContent = Content[row, column];
                         if (cellContent == TOMATO) tomatoCountSlice++;
-                        else if (cellContent == MASHROOM) mshromCountSlice++;
+                        else if (cellContent == MUSHROOM) mshromCountSlice++;
                         else
                         {
                             RedWriteLine("You want me to cut an empty cell! SHAME ON YOU!");
