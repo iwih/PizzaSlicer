@@ -12,6 +12,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace pizza_slicer
 {
@@ -60,7 +62,7 @@ namespace pizza_slicer
         {
             //todo Uncomment _one_ of the following four lines to analyze the required Pizza - 2018
             //_inputPath = ".\\input\\big.in";
-            //_inputPath = ".\\input\\medium.in";
+            _inputPath = ".\\input\\medium.in";
             //_inputPath = ".\\input\\small.in";
             //_inputPath = ".\\input\\example.in";
             _pizza = new Pizza(_inputPath);
@@ -79,9 +81,9 @@ namespace pizza_slicer
             {
                 for (var rowsInSlice = 1; rowsInSlice <= cellsInSlice; rowsInSlice++)
                 {
-                    //checking for valid rows x columns combination
+                    //checking for valid rowsCount x columnsCount combination
                     if ((cellsInSlice % rowsInSlice) != 0) continue;
-                    //columns count
+                    //columnsCount count
                     var colsInSlice = cellsInSlice / rowsInSlice;
                     //reaching this far means the combination is acceptable
                     attempsPossible.Push(rowsInSlice, colsInSlice);
@@ -221,7 +223,7 @@ namespace pizza_slicer
             {
                 _theUltimateSlice =
                     new SlicingAttempts(
-                        (char[,])pizza.Content.Clone(),
+                        (char[,]) pizza.Content.Clone(),
                         successfulSlices,
                         totalSlicedCells);
 
@@ -329,46 +331,33 @@ namespace pizza_slicer
             }
         }
 
-        private static void DrawPizzaTo2X2(char[,] pizzaContent, int rows, int columns, string operationName)
+        private static void DrawPizzaTo2X2(
+            char[,] pizzaContent,
+            int rowsCount,
+            int columnsCount,
+            string operationName)
         {
             Console.WriteLine($"Painting operation: {operationName}");
-            using (var bitmap = new Bitmap(rows * 2, columns * 2))
+            using (var image = new Image<Rgba32>(rowsCount, columnsCount))
             {
-                using (var graphics = System.Drawing.Graphics.FromImage(bitmap))
+                for (var row = 0; row < rowsCount; row++)
                 {
-                    for (var row = 0; row < rows; row++)
+                    for (var column = 0; column < columnsCount; column++)
                     {
-                        for (var column = 0; column < columns; column++)
-                        {
-                            var ingredientColor = IngredientColor(pizzaContent[row, column]);
-
-                            var x1 = column * 2;
-                            var x2 = x1 + 1;
-                            var y1 = row * 2;
-                            var y2 = y1 + 1;
-
-                            var pRow1Start = new Point(x1, y1);
-                            var pRow1End = new Point(x2, y1);
-
-                            var pRow2Start = new Point(x1, y2);
-                            var pRow2End = new Point(x2, y2);
-
-                            var pen = new Pen(ingredientColor, 1);
-                            graphics.DrawLine(pen, pRow1Start, pRow1End);
-                            graphics.DrawLine(pen, pRow2Start, pRow2End);
-                        }
+                        var ingredientColorRgba = IngredientColorRgba(pizzaContent[row, column]);
+                        image[row, column] = ingredientColorRgba;
                     }
+                }
 
-                    try
-                    {
-                        var outputFileName = PathToSave(operationName, ".bmp");
-                        Console.WriteLine($"Saving Bitmap of operation: {operationName}, to {outputFileName}");
-                        bitmap.Save(outputFileName);
-                    }
-                    catch (Exception e)
-                    {
-                        Console.WriteLine(e.StackTrace);
-                    }
+                try
+                {
+                    var outputFileName = PathToSave(operationName, ".bmp");
+                    Console.WriteLine($"Saving Bitmap of operation: {operationName}, to {outputFileName}");
+                    image.Save(outputFileName);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.StackTrace);
                 }
             }
         }
@@ -386,6 +375,25 @@ namespace pizza_slicer
                     break;
                 default:
                     ingredientColor = Color.AntiqueWhite;
+                    break;
+            }
+
+            return ingredientColor;
+        }
+
+        private static Rgba32 IngredientColorRgba(char pizzaCell)
+        {
+            Rgba32 ingredientColor;
+            switch (pizzaCell)
+            {
+                case TOMATO:
+                    ingredientColor = Rgba32.Maroon;
+                    break;
+                case MUSHROOM:
+                    ingredientColor = Rgba32.DarkSeaGreen;
+                    break;
+                default:
+                    ingredientColor = Rgba32.AntiqueWhite;
                     break;
             }
 
@@ -443,7 +451,7 @@ namespace pizza_slicer
 
             public void Push(int rows, int columns)
             {
-                Add(new SizePossibleSlice { RowsCount = rows, ColumnsCount = columns });
+                Add(new SizePossibleSlice {RowsCount = rows, ColumnsCount = columns});
             }
         }
 
@@ -539,9 +547,9 @@ namespace pizza_slicer
             {
                 var pizzaInput = File.ReadAllText(pizzaPath, Encoding.ASCII);
 
-                var tokensPizza = pizzaInput.Split(new[] { "\n" }, StringSplitOptions.None);
+                var tokensPizza = pizzaInput.Split(new[] {"\n"}, StringSplitOptions.None);
 
-                var headerTokens = tokensPizza[0].Split(new[] { " " }, StringSplitOptions.None);
+                var headerTokens = tokensPizza[0].Split(new[] {" "}, StringSplitOptions.None);
                 RowsPizzaCount = int.Parse(headerTokens[0]);
                 ColumnsPizzaCount = int.Parse(headerTokens[1]);
                 IngredintsMinInSlice = int.Parse(headerTokens[2]);
@@ -615,7 +623,7 @@ namespace pizza_slicer
                     IngredintsMinInSlice = IngredintsMinInSlice,
                     CellsMaxInSlice = CellsMaxInSlice,
                     CellsMinInSlice = CellsMinInSlice,
-                    Content = (char[,])Content.Clone(),
+                    Content = (char[,]) Content.Clone(),
                     Size = Size
                 };
             }
