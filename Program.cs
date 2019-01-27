@@ -61,10 +61,11 @@ namespace pizza_slicer
         private static void SliceThisPizza()
         {
             //todo Uncomment _one_ of the following four lines to analyze the required Pizza - 2018
-            //_inputPath = ".\\input\\d_big.in";
-            _inputPath = ".\\input\\c_medium.in";
-            //_inputPath = ".\\input\\b_small.in";
-            //_inputPath = ".\\input\\a_example.in";
+            //var path = "/input/d_big.in";
+            var path = "input\\c_medium.in";
+            //var path = "/input/b_small.in";
+            //var path = "/input/a_example.in";
+            _inputPath = Path.Combine(Environment.CurrentDirectory, path);
             _pizza = new Pizza(_inputPath);
             _inputFileName = Path.GetFileName(_inputPath);
 
