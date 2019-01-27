@@ -19,9 +19,9 @@ namespace pizza_slicer
 {
     public class Program
     {
-        public const char TOMATO = 'T';
-        public const char MUSHROOM = 'M';
-        public const char EMPTY = '0';
+        public const char Tomato = 'T';
+        public const char Mushroom = 'M';
+        public const char Empty = '0';
 
         private static string _directoryForOutput;
         private static string _inputFileName;
@@ -73,8 +73,8 @@ namespace pizza_slicer
 
         private static SizePossibleSlice GetPossibleSliceDimensions(int minCells, int maxCells)
         {
-            Console.WriteLine("Getting possible dimnesions of the slices..");
-            var attempsPossible = new SizePossibleSlice();
+            Console.WriteLine("Getting possible dimensions of the slices..");
+            var attemptsPossible = new SizePossibleSlice();
 
             //finding all possible slices dimensions
             for (var cellsInSlice = minCells; cellsInSlice <= maxCells; cellsInSlice++)
@@ -86,12 +86,12 @@ namespace pizza_slicer
                     //columnsCount count
                     var colsInSlice = cellsInSlice / rowsInSlice;
                     //reaching this far means the combination is acceptable
-                    attempsPossible.Push(rowsInSlice, colsInSlice);
+                    attemptsPossible.Push(rowsInSlice, colsInSlice);
                 }
             }
 
-            Console.WriteLine($"Possible dimensions of slices had been calculated: {attempsPossible.Count}");
-            return attempsPossible;
+            Console.WriteLine($"Possible dimensions of slices had been calculated: {attemptsPossible.Count}");
+            return attemptsPossible;
         }
 
         private static string GetSliceOutputLine(SlicePizza slice)
@@ -184,38 +184,36 @@ namespace pizza_slicer
             List<PossibleSlices> possibleSlices,
             List<SlicePizza> successfulSlices,
             int totalSlicedCells,
-            int currentPossiblityIndex)
+            int currentPossibilityIndex)
         {
-            if (currentPossiblityIndex < possibleSlices.Count)
-                for (var i = currentPossiblityIndex; i < possibleSlices.Count; i++)
+            if (currentPossibilityIndex < possibleSlices.Count)
+                for (var i = currentPossibilityIndex; i < possibleSlices.Count; i++)
                 {
-                    var possiblity = possibleSlices[i];
-                    for (var j = 0; j < possiblity.Slices.Count; j++)
+                    var possibility = possibleSlices[i];
+                    foreach (var slice in possibility.Slices)
                     {
-                        var slice = possiblity.Slices[j];
-                        var realSlice = new SlicePizza(pizza, possiblity.OriginPoint, slice.EndPoint);
-                        if (realSlice.IsValidSlice)
-                        {
-                            var pizzaCloned = pizza.Clone();
+                        var realSlice = new SlicePizza(pizza, possibility.OriginPoint, slice.EndPoint);
+                        if (!realSlice.IsValidSlice) continue;
 
-                            var nextPossibilityIndex = i + 1;
+                        var pizzaCloned = pizza.Clone();
 
-                            var successfulSlicesCloned = successfulSlices.GetRange(0, successfulSlices.Count);
+                        var nextPossibilityIndex = i + 1;
 
-                            pizzaCloned.CutSlice(realSlice);
-                            successfulSlicesCloned.Add(realSlice);
+                        var successfulSlicesCloned = successfulSlices.GetRange(0, successfulSlices.Count);
 
-                            var totalSlicedCellsCloned = totalSlicedCells + realSlice.Size;
+                        pizzaCloned.CutSlice(realSlice);
+                        successfulSlicesCloned.Add(realSlice);
 
-                            //task = Task.Factory.StartNew(() =>
-                            GenerateAllPossibleSlicingLayouts(
-                                pizzaCloned,
-                                possibleSlices,
-                                successfulSlicesCloned,
-                                totalSlicedCellsCloned,
-                                nextPossibilityIndex);
-                            //);
-                        }
+                        var totalSlicedCellsCloned = totalSlicedCells + realSlice.Size;
+
+                        //task = Task.Factory.StartNew(() =>
+                        GenerateAllPossibleSlicingLayouts(
+                            pizzaCloned,
+                            possibleSlices,
+                            successfulSlicesCloned,
+                            totalSlicedCellsCloned,
+                            nextPossibilityIndex);
+                        //);
                     }
                 }
 
@@ -262,7 +260,7 @@ namespace pizza_slicer
             int colsCount,
             SizePossibleSlice possibleSliceSize)
         {
-            //only negative coordinations are rejected
+            //only negative coordinates are rejected
             var quadDirectionsEndPoints = new List<Point>();
 
             var maxRow = rowsCount - 1;
@@ -367,10 +365,10 @@ namespace pizza_slicer
             Rgba32 ingredientColor;
             switch (pizzaCell)
             {
-                case TOMATO:
+                case Tomato:
                     ingredientColor = Rgba32.Maroon;
                     break;
-                case MUSHROOM:
+                case Mushroom:
                     ingredientColor = Rgba32.DarkSeaGreen;
                     break;
                 default:
@@ -442,7 +440,7 @@ namespace pizza_slicer
             public Point StartPoint { get; }
             public Point EndPoint { get; }
             private int TomatoCount { get; }
-            private int MashroomCount { get; }
+            private int MushroomCount { get; }
             public bool IsValidSlice { get; }
             private char[,] Content { get; }
 
@@ -478,10 +476,10 @@ namespace pizza_slicer
                         var ingredient = pizza.Content[row, column];
                         Content[rowsCounter, columnsCounter] = ingredient;
 
-                        if (ingredient == TOMATO)
+                        if (ingredient == Tomato)
                             TomatoCount++;
-                        else if (ingredient == MUSHROOM)
-                            MashroomCount++;
+                        else if (ingredient == Mushroom)
+                            MushroomCount++;
                         else
                         {
                             unSliceableArea = true;
@@ -499,10 +497,10 @@ namespace pizza_slicer
                     IsValidSlice = false;
                 else
                 {
-                    var pizzaIngredintsMinInSlice = pizza.IngredintsMinInSlice;
+                    var pizzaIngredintsMinInSlice = pizza.IngredientsMinInSlice;
                     IsValidSlice =
                         (TomatoCount >= pizzaIngredintsMinInSlice) &&
-                        (MashroomCount >= pizzaIngredintsMinInSlice) &&
+                        (MushroomCount >= pizzaIngredintsMinInSlice) &&
                         (Size >= pizza.CellsMinInSlice) &&
                         (Size <= pizza.CellsMaxInSlice);
                 }
@@ -513,7 +511,7 @@ namespace pizza_slicer
         {
             public int RowsPizzaCount { private set; get; }
             public int ColumnsPizzaCount { private set; get; }
-            public int IngredintsMinInSlice { private set; get; }
+            public int IngredientsMinInSlice { private set; get; }
             public int CellsMaxInSlice { private set; get; }
             public int CellsMinInSlice { private set; get; }
             public int Size { private set; get; }
@@ -533,9 +531,9 @@ namespace pizza_slicer
                 var headerTokens = tokensPizza[0].Split(new[] {" "}, StringSplitOptions.None);
                 RowsPizzaCount = int.Parse(headerTokens[0]);
                 ColumnsPizzaCount = int.Parse(headerTokens[1]);
-                IngredintsMinInSlice = int.Parse(headerTokens[2]);
+                IngredientsMinInSlice = int.Parse(headerTokens[2]);
                 CellsMaxInSlice = int.Parse(headerTokens[3]);
-                CellsMinInSlice = IngredintsMinInSlice * 2;
+                CellsMinInSlice = IngredientsMinInSlice * 2;
                 Size = ColumnsPizzaCount * RowsPizzaCount;
 
                 Content = new char[RowsPizzaCount, ColumnsPizzaCount];
@@ -575,20 +573,20 @@ namespace pizza_slicer
                     for (var column = strtngY; column <= endingY; column++)
                     {
                         var cellContent = Content[row, column];
-                        if (cellContent == TOMATO) tomatoCountSlice++;
-                        else if (cellContent == MUSHROOM) mshromCountSlice++;
+                        if (cellContent == Tomato) tomatoCountSlice++;
+                        else if (cellContent == Mushroom) mshromCountSlice++;
                         else
                         {
                             RedWriteLine("You want me to cut an empty cell! SHAME ON YOU!");
                             Console.ReadLine();
                         }
 
-                        Content[row, column] = EMPTY;
+                        Content[row, column] = Empty;
                     }
                 }
 
-                if (tomatoCountSlice < IngredintsMinInSlice ||
-                    mshromCountSlice < IngredintsMinInSlice)
+                if (tomatoCountSlice < IngredientsMinInSlice ||
+                    mshromCountSlice < IngredientsMinInSlice)
                 {
                     RedWriteLine("This slice does not satisfy the rules!");
                     Console.ReadLine();
@@ -601,7 +599,7 @@ namespace pizza_slicer
                 {
                     RowsPizzaCount = RowsPizzaCount,
                     ColumnsPizzaCount = ColumnsPizzaCount,
-                    IngredintsMinInSlice = IngredintsMinInSlice,
+                    IngredientsMinInSlice = IngredientsMinInSlice,
                     CellsMaxInSlice = CellsMaxInSlice,
                     CellsMinInSlice = CellsMinInSlice,
                     Content = (char[,]) Content.Clone(),
