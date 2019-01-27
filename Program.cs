@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using SixLabors.ImageSharp;
@@ -62,7 +63,10 @@ namespace pizza_slicer
         {
             //todo Uncomment _one_ of the following four lines to analyze the required Pizza - 2018
             //var path = "/input/d_big.in";
-            var path = "input\\c_medium.in";
+            var path =
+                RuntimeInformation.IsOSPlatform(OSPlatform.Windows)
+                    ? "input\\c_medium.in"
+                    : "input/c_medium.in";
             //var path = "/input/b_small.in";
             //var path = "/input/a_example.in";
             _inputPath = Path.Combine(Environment.CurrentDirectory, path);
