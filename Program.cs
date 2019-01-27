@@ -36,8 +36,16 @@ namespace pizza_slicer
             _directoryForOutput = Console.ReadLine();
             if (!Directory.Exists(_directoryForOutput))
             {
-                Console.WriteLine($"Given ouput directory does not exit, will use {defaultDir}...");
-                _directoryForOutput = defaultDir;
+                try
+                {
+                    Directory.CreateDirectory(_directoryForOutput);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine("Could not create/use specified output-directory, exiting...");
+                    Console.ReadLine();
+                    return;
+                }
             }
 
             Console.WriteLine();
