@@ -12,6 +12,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 
@@ -248,7 +249,7 @@ namespace PizzaSlicer
             int currentPossibilityIndex)
         {
             if (currentPossibilityIndex < possibleSlices.Count)
-                for (var i = currentPossibilityIndex; i < possibleSlices.Count; i++)
+                Parallel.For(currentPossibilityIndex, possibleSlices.Count, i =>
                 {
                     var possibility = possibleSlices[i];
                     foreach (var slice in possibility.Slices)
@@ -276,7 +277,7 @@ namespace PizzaSlicer
                             nextPossibilityIndex);
                         //);
                     }
-                }
+                });
 
             if (totalSlicedCells > _theUltimateSlice.TotalSlicedCells)
             {
@@ -585,9 +586,9 @@ namespace PizzaSlicer
 
             public Pizza(string pizzaPath)
             {
-                var pizzaInput = File.ReadAllText(pizzaPath, Encoding.ASCII);
+                var pizzaInput = File.ReadAllText(pizzaPath, Encoding.UTF8);
 
-                var tokensPizza = pizzaInput.Split(new[] {"\n"}, StringSplitOptions.None);
+                var tokensPizza = pizzaInput.Split(new[] {Environment.NewLine}, StringSplitOptions.None);
 
                 var headerTokens = tokensPizza[0].Split(new[] {" "}, StringSplitOptions.None);
                 RowsPizzaCount = int.Parse(headerTokens[0]);
